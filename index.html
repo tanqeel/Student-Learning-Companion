@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<base href="https://e2ovdtjk6jjpm.ok.kimi.link">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCompanion - AI-Powered Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2D5A3D;
+            --secondary: #C65D3B;
+            --accent: #F4A460;
+            --neutral: #FDF6E3;
+            --text: #2C2C2C;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--neutral) 0%, #F5F1E8 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .hero-text {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .floating-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: radial-gradient(circle at 20% 80%, rgba(45, 90, 61, 0.3) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, rgba(198, 93, 59, 0.3) 0%, transparent 50%),
+                              radial-gradient(circle at 40% 40%, rgba(244, 164, 96, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, #1a3d2e 100%);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-item:hover::before {
+            left: 100%;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #a6482d 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(198, 93, 59, 0.3);
+        }
+        
+        .stats-counter {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--secondary) 100%);
+            transition: width 1s ease-in-out;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            
+            .overlay {
+                display: block !important;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .mobile-menu-btn {
+                display: none !important;
+            }
+            
+            .overlay {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 1rem;
+            }
+        }
+        
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+        
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            animation: scaleIn 0.4s ease forwards;
+        }
+        
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Back to Dashboard Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: #a6482d;
+            transform: translateX(-3px);
+            box-shadow: 0 5px 15px rgba(198, 93, 59, 0.3);
+        }
+        
+        /* Overlay for mobile sidebar */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            display: none;
+        }
+        
+        /* Online/Offline indicator */
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .status-indicator.online {
+            background: #51cf66;
+            color: white;
+        }
+        
+        .status-indicator.offline {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Pattern -->
+    <div class="floating-pattern"></div>
+    
+    <!-- Online/Offline Status Indicator -->
+    <div class="status-indicator online" id="statusIndicator">
+        <span id="statusText">Online</span>
+    </div>
+    
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn fixed top-4 left-4 z-50 bg-green-600 text-white p-3 rounded-lg shadow-lg lg:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+    
+    <!-- Overlay for mobile sidebar -->
+    <div class="overlay"></div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar fixed left-0 top-0 h-full w-72 z-50 flex flex-col">
+        <!-- Logo Section -->
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">E</span>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl">EduCompanion</h1>
+                    <p class="text-white/70 text-sm">AI Learning Platform</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Items -->
+        <nav class="flex-1 py-4">
+            <div class="px-4 mb-2">
+                <p class="text-white/60 text-xs uppercase tracking-wide">Main Menu</p>
+            </div>
+            
+            <a href="index.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="study.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Study Session</span>
+            </a>
+            
+            <a href="progress.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span>Progress</span>
+            </a>
+            
+            <a href="resources.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                </svg>
+                <span>Resources</span>
+            </a>
+            
+            <a href="ai-tutor.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span>AI Tutor</span>
+            </a>
+            
+            <a href="calendar.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+                <span>Calendar</span>
+            </a>
+            
+            <a href="settings.html" class="nav-item flex items-center space-x-3 px-6 py-3 text-white/80 hover:text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <!-- User Profile Section -->
+        <div class="p-4 border-t border-white/10">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold" id="userInitial">A</span>
+                </div>
+                <div>
+                    <p class="text-white font-medium" id="userName">Muhammad Ali</p>
+                    <p class="text-white/70 text-sm">Grade 11 Student</p>
+                </div>
+            </div>
+            <button class="w-full mt-3 py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors" onclick="logout()">
+                Logout
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content ml-72 transition-all duration-300">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 px-8 py-6 fade-in">
+            <div class="header-content flex items-center justify-between">
+                <div>
+                    <h1 class="hero-text text-3xl font-bold text-gray-800" id="welcomeMessage">Welcome back!</h1>
+                    <p class="text-gray-600 mt-1">Ready to continue your learning journey?</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" id="connectionStatus"></div>
+                        <span id="connectionText">Online</span>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span class="text-white font-semibold text-lg" id="headerInitial">A</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Content -->
+        <main class="p-8">
+            <!-- Stats Cards -->
+            <div class="stats-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="card rounded-2xl p-6 scale-in">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl">📚</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">Study Sessions</h3>
+                    <p class="stats-counter text-3xl font-bold text-gray-800" data-target="24">0</p>
+                    <p class="text-green-600 text-sm mt-2">↗ +12% this week</p>
+                </div>
+                
+                <div class="card rounded-2xl p-6 scale-in" style="animation-delay: 0.1s;">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl">⭐</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">Average Score</h3>
+                    <p class="stats-counter text-3xl font-bold text-gray-800" data-target="87">0</p>
+                    <p class="text-green-600 text-sm mt-2">↗ +5% improvement</p>
+                </div>
+                
+                <div class="card rounded-2xl p-6 scale-in" style="animation-delay: 0.2s;">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl">⚡</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">Study Streak</h3>
+                    <p class="stats-counter text-3xl font-bold text-gray-800" data-target="12">0</p>
+                    <p class="text-orange-600 text-sm mt-2">🔥 Current streak</p>
+                </div>
+                
+                <div class="card rounded-2xl p-6 scale-in" style="animation-delay: 0.3s;">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl">🎯</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">AI Tutor Sessions</h3>
+                    <p class="stats-counter text-3xl font-bold text-gray-800" data-target="8">0</p>
+                    <p class="text-blue-600 text-sm mt-2">🤖 AI assisted</p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions & Progress -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Quick Actions -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 slide-in-left">Quick Actions</h2>
+                    <div class="quick-actions grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button class="card rounded-xl p-6 text-left hover:scale-105 transition-transform" onclick="startStudySession()">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Start Study Session</h3>
+                                    <p class="text-gray-600 text-sm">Begin focused learning</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="card rounded-xl p-6 text-left hover:scale-105 transition-transform" onclick="askAITutor()">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Ask AI Tutor</h3>
+                                    <p class="text-gray-600 text-sm">Get instant help</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="card rounded-xl p-6 text-left hover:scale-105 transition-transform" onclick="viewResources()">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">View Resources</h3>
+                                    <p class="text-gray-600 text-sm">Access study materials</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="card rounded-xl p-6 text-left hover:scale-105 transition-transform" onclick="scheduleSession()">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Schedule Session</h3>
+                                    <p class="text-gray-600 text-sm">Plan your study time</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Current Progress -->
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 slide-in-left">Current Progress</h2>
+                    <div class="card rounded-2xl p-6">
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Mathematics</span>
+                                    <span class="text-sm text-gray-500">75%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Physics</span>
+                                    <span class="text-sm text-gray-500">60%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 60%; animation-delay: 0.2s;"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Chemistry</span>
+                                    <span class="text-sm text-gray-500">45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 45%; animation-delay: 0.4s;"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">English</span>
+                                    <span class="text-sm text-gray-500">90%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 90%; animation-delay: 0.6s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary w-full mt-6 py-3 px-4 rounded-xl text-white font-medium" onclick="viewDetailedProgress()">
+                            View Detailed Progress
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card rounded-2xl p-6 fade-in">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Activity</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800">Completed Mathematics Quiz</p>
+                            <p class="text-sm text-gray-600">Scored 92% in Calculus fundamentals</p>
+                        </div>
+                        <span class="text-sm text-gray-500">2 hours ago</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800">AI Tutor Session</p>
+                            <p class="text-sm text-gray-600">Discussed Physics wave properties</p>
+                        </div>
+                        <span class="text-sm text-gray-500">5 hours ago</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800">Added Study Notes</p>
+                            <p class="text-sm text-gray-600">Chemistry - Organic compounds</p>
+                        </div>
+                        <span class="text-sm text-gray-500">1 day ago</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Helper functions for API calls
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            };
+            
+            if (data && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'API call failed');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+        
+        // User Authentication
+          async function loginUser(username, password) {
+              try {
+                  const result = await apiCall('/login', 'POST', { username, password });
+                  
+                  if (result.success) {
+                      // Store user info
+                      localStorage.setItem('user', JSON.stringify(result.user));
+                      
+                      // Update UI
+                      document.getElementById('userInitial').textContent = username.charAt(0).toUpperCase();
+                      document.getElementById('headerInitial').textContent = username.charAt(0).toUpperCase();
+                      document.getElementById('userName').textContent = username;
+                      document.getElementById('welcomeMessage').textContent = `Welcome back, ${username}!`;
+                      
+                      // Redirect to dashboard
+                      window.location.href = 'index.html';
+                  }
+                  
+                  return result;
+              } catch (error) {
+                  console.error('Login failed:', error);
+                  alert('Login failed: ' + error.message);
+                  throw error;
+              }
+          }
+          
+          // Logout function
+          async function logout() {
+              try {
+                  await apiCall('/logout', 'POST');
+                  localStorage.removeItem('user');
+                  window.location.href = 'login.html';
+              } catch (error) {
+                  console.error('Logout failed:', error);
+                  // Force logout anyway
+                  localStorage.removeItem('user');
+                  window.location.href = 'login.html';
+              }
+          }
+          
+          // Ask AI Tutor (Gemini API)
+          async function askAITutor(question) {
+              try {
+                  const result = await apiCall('/ask', 'POST', { question });
+                  return result.answer;
+              } catch (error) {
+                  console.error('AI Tutor error:', error);
+                  return 'Sorry, I encountered an error. Please try again later.';
+              }
+          }
+          
+          // Check authentication
+          window.addEventListener('load', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user data
+            const user = JSON.parse(currentUser);
+            updateUserInterface(user);
+        });
+        
+        // Update user interface
+        function updateUserInterface(user) {
+            const userInitial = user.fullName ? user.fullName.charAt(0).toUpperCase() : 'A';
+            const userName = user.fullName || 'Ayesha Khan';
+            
+            document.getElementById('userInitial').textContent = userInitial;
+            document.getElementById('headerInitial').textContent = userInitial;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${userName}!`;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            window.location.href = 'login.html';
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+        
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+                overlay.classList.add('hidden');
+            }
+        });
+        
+        // Online/Offline detection
+        function updateOnlineStatus() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionText = document.getElementById('connectionText');
+            
+            if (navigator.onLine) {
+                statusIndicator.className = 'status-indicator online';
+                statusText.textContent = 'Online';
+                connectionStatus.className = 'w-2 h-2 bg-green-500 rounded-full animate-pulse';
+                connectionText.textContent = 'Online';
+            } else {
+                statusIndicator.className = 'status-indicator offline';
+                statusText.textContent = 'Offline';
+                connectionStatus.className = 'w-2 h-2 bg-red-500 rounded-full';
+                connectionText.textContent = 'Offline';
+            }
+        }
+        
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
+        // Animate counters
+        function animateCounters() {
+            document.querySelectorAll('.stats-counter').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                let count = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    count += increment;
+                    if (count >= target) {
+                        count = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(count);
+                }, 40);
+            });
+        }
+        
+        // Animate progress bars
+        function animateProgressBars() {
+            document.querySelectorAll('.progress-bar').forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.width = bar.style.width;
+                }, index * 200);
+            });
+        }
+        
+        // Initialize animations when page loads
+        window.addEventListener('load', () => {
+            setTimeout(animateCounters, 500);
+            setTimeout(animateProgressBars, 1000);
+        });
+        
+        // Quick Actions Functions
+        function startStudySession() {
+            if (navigator.onLine) {
+                window.location.href = 'study.html';
+            } else {
+                showOfflineNotification();
+            }
+        }
+        
+        function askAITutor() {
+            if (navigator.onLine) {
+                window.location.href = 'ai-tutor.html';
+            } else {
+                showOfflineNotification();
+            }
+        }
+        
+        function viewResources() {
+            window.location.href = 'resources.html';
+        }
+        
+        function scheduleSession() {
+            if (navigator.onLine) {
+                window.location.href = 'calendar.html';
+            } else {
+                showOfflineNotification();
+            }
+        }
+        
+        function viewDetailedProgress() {
+            window.location.href = 'progress.html';
+        }
+        
+        function showOfflineNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>This feature requires internet connection</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Quick action buttons with smooth transitions
+        document.querySelectorAll('.quick-actions button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                // Add ripple effect
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                ripple.style.width = '20px';
+                ripple.style.height = '20px';
+                ripple.style.marginLeft = '-10px';
+                ripple.style.marginTop = '-10px';
+                
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+        
+        // Add ripple animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Responsive handling
+        function handleResize() {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('open');
+                overlay.classList.add('hidden');
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+    </script>
+</body>
+</html>
